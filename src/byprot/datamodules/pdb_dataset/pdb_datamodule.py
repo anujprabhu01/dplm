@@ -12,9 +12,19 @@ import numpy as np
 import pandas as pd
 import torch
 import tree
-from openfold.config import config as OF_CONFIG
-from openfold.data import data_transforms
-from openfold.utils import rigid_utils
+
+# Make OpenFold optional for sequence-only training
+try:
+    from openfold.config import config as OF_CONFIG
+    from openfold.data import data_transforms
+    from openfold.utils import rigid_utils
+    OPENFOLD_AVAILABLE = True
+except ImportError:
+    OPENFOLD_AVAILABLE = False
+    OF_CONFIG = None
+    data_transforms = None
+    rigid_utils = None
+
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, Dataset, default_collate
 from torch.utils.data.distributed import DistributedSampler, dist

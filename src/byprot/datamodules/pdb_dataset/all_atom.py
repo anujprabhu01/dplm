@@ -19,25 +19,37 @@ Code adapted from OpenFold.
 """
 
 import torch
-from openfold.data import data_transforms
-from openfold.np import residue_constants
-from openfold.utils import rigid_utils as ru
+
+# Make OpenFold optional for sequence-only training
+try:
+    from openfold.data import data_transforms
+    from openfold.np import residue_constants
+    from openfold.utils import rigid_utils as ru
+    OPENFOLD_AVAILABLE = True
+except ImportError:
+    OPENFOLD_AVAILABLE = False
+    data_transforms = None
+    residue_constants = None
+    ru = None
 
 from byprot.datamodules.pdb_dataset import utils as du
 
-Rigid = ru.Rigid
-Rotation = ru.Rotation
+Rigid = ru.Rigid if OPENFOLD_AVAILABLE else None
+Rotation = ru.Rotation if OPENFOLD_AVAILABLE else None
 
 # Residue Constants from OpenFold/AlphaFold2.
-
-
-IDEALIZED_POS = torch.tensor(
-    residue_constants.restype_atom14_rigid_group_positions
-)
-DEFAULT_FRAMES = torch.tensor(
-    residue_constants.restype_rigid_group_default_frame
-)
-ATOM_MASK = torch.tensor(residue_constants.restype_atom14_mask)
+if OPENFOLD_AVAILABLE:
+    IDEALIZED_POS = torch.tensor(
+        residue_constants.restype_atom14_rigid_group_positions
+    )
+    DEFAULT_FRAMES = torch.tensor(
+        residue_constants.restype_rigid_group_default_frame
+    )
+    ATOM_MASK = torch.tensor(residue_constants.restype_atom14_mask)
+else:
+    IDEALIZED_POS = None
+    DEFAULT_FRAMES = None
+    ATOM_MASK = None
 GROUP_IDX = torch.tensor(residue_constants.restype_atom14_to_rigid_group)
 
 

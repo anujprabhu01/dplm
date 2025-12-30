@@ -22,12 +22,20 @@ import torch
 from Bio import PDB
 from Bio.PDB import PDBIO, MMCIFParser
 from Bio.PDB.Chain import Chain
-from openfold.utils import rigid_utils as ru
+
+# Make OpenFold optional for sequence-only training
+try:
+    from openfold.utils import rigid_utils as ru
+    OPENFOLD_AVAILABLE = True
+except ImportError:
+    OPENFOLD_AVAILABLE = False
+    ru = None
+
 from torch_scatter import scatter, scatter_add
 
 from byprot.datamodules.pdb_dataset import protein, residue_constants
 
-Rigid = ru.Rigid
+Rigid = ru.Rigid if OPENFOLD_AVAILABLE else None
 Protein = protein.Protein
 
 # Global map from chain characters to integers.
