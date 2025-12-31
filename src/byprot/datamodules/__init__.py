@@ -21,4 +21,5 @@ def register_datamodule(name):
     return decorator
 
 
-import_modules(os.path.dirname(__file__), "byprot.datamodules")
+# Exclude structure-related datamodules that require OpenFold
+import_modules(os.path.dirname(__file__), "byprot.datamodules", excludes=["pdb_dataset"])

@@ -22,8 +22,9 @@ def register_model(name):
 
 
 # automatically import any Python files in the models/ directory
+# Exclude structure-related models that require OpenFold
 import_modules(
     os.path.dirname(__file__),
     "byprot.models",
-    excludes=["protein_structure_prediction"],
+    excludes=["protein_structure_prediction", "structok"],
 )
