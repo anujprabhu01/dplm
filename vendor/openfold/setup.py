@@ -59,15 +59,11 @@ def get_cuda_bare_metal_version(cuda_dir):
 # ])
 # 
 # compute_capabilities.add((7, 0))
-# _, bare_metal_major, _ = get_cuda_bare_metal_version(CUDA_HOME)
 # if int(bare_metal_major) >= 11:
 #     compute_capabilities.add((8, 0))
-# 
-# compute_capability, _ = get_nvidia_cc()
-# if compute_capability is not None:
-#     compute_capabilities = set([compute_capability])
 
 # Fix for CUDA 12.0+: Only compile for detected GPU (RTX 4090 = sm_89)
+_, bare_metal_major, _ = get_cuda_bare_metal_version(CUDA_HOME)
 compute_capability, _ = get_nvidia_cc()
 if compute_capability is not None:
     compute_capabilities = set([compute_capability])
