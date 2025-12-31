@@ -4,6 +4,17 @@ Smoke test for unconditional generation using a local checkpoint.
 Usage:
     python scripts/test_generation_smoke.py --checkpoint_path logs/smoke_test_*/checkpoints/last.ckpt
 """
+
+import pyrootutils
+
+# Set up project root - this sets PROJECT_ROOT env variable needed by configs
+root = pyrootutils.setup_root(
+    search_from=__file__,
+    indicator=[".git", "pyproject.toml"],
+    pythonpath=True,
+    dotenv=True,
+)
+
 import argparse
 import torch
 from pathlib import Path
