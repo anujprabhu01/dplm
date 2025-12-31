@@ -29,7 +29,7 @@ class SortishSampler(Sampler):
         num_replicas: int = 1,
         rank: int = 0,
     ):
-        if dist.is_available():
+        if dist.is_available() and dist.is_initialized():
             num_replicas = dist.get_world_size()
             rank = dist.get_rank()
         self.data = np.argsort(sequence_lengths)
