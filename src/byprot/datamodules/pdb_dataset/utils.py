@@ -31,7 +31,13 @@ except ImportError:
     OPENFOLD_AVAILABLE = False
     ru = None
 
-from torch_scatter import scatter, scatter_add
+try:
+    from torch_scatter import scatter, scatter_add
+    TORCH_SCATTER_AVAILABLE = True
+except ImportError:
+    TORCH_SCATTER_AVAILABLE = False
+    scatter = None
+    scatter_add = None
 
 from byprot.datamodules.pdb_dataset import protein, residue_constants
 
