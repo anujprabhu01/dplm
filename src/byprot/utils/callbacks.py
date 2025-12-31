@@ -125,11 +125,15 @@ if _RICH_AVAILABLE:
             if self.is_enabled and (
                 self.progress is None or self._progress_stopped
             ):
-                self._reset_progress_bar_ids()
-                reconfigure(**self._console_kwargs)
-                self._console = get_console()
+            self._reset_progress_bar_ids()
+            reconfigure(**self._console_kwargs)
+            self._console = get_console()
+            try:
                 self._console.clear_live()
-                self._metric_component = BetterMetricsTextColumn(
+            except (IndexError, AttributeError):
+                # No live context to clear, skip
+                pass
+            self._metric_component = BetterMetricsTextColumn(
                     trainer,
                     self.theme.metrics,
                     text_delimiter=",",
