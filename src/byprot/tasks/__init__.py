@@ -297,4 +297,5 @@ def register_task(name):
 
 
 # automatically import any Python files in the models/ directory
-utils.import_modules(os.path.dirname(__file__), "byprot.tasks")
+# Exclude structure-related tasks that require OpenFold
+utils.import_modules(os.path.dirname(__file__), "byprot.tasks", excludes=["struct_tokenizer"])
