@@ -329,5 +329,12 @@ def setup_dataloader(
 
 
 def load_dataset_from_hf(data_path, split):
-    ds = load_dataset(data_path, split=split)
+    import os
+    # Check if data_path is a local directory saved with save_to_disk
+    if os.path.isdir(data_path):
+        from datasets import load_from_disk
+        ds = load_from_disk(data_path)
+    else:
+        # Load from HuggingFace Hub
+        ds = load_dataset(data_path, split=split)
     return ds
