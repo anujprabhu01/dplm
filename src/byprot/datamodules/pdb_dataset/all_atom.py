@@ -46,11 +46,12 @@ if OPENFOLD_AVAILABLE:
         residue_constants.restype_rigid_group_default_frame
     )
     ATOM_MASK = torch.tensor(residue_constants.restype_atom14_mask)
+    GROUP_IDX = torch.tensor(residue_constants.restype_atom14_to_rigid_group)
 else:
     IDEALIZED_POS = None
     DEFAULT_FRAMES = None
     ATOM_MASK = None
-GROUP_IDX = torch.tensor(residue_constants.restype_atom14_to_rigid_group)
+    GROUP_IDX = None
 
 
 def to_atom37(trans, rots):
