@@ -95,7 +95,7 @@ logger:
 
 callbacks:
   model_checkpoint:
-    dirpath: ${paths.output_dir}/checkpoints/smoke_test
+    dirpath: ${paths.ckpt_dir}
     filename: "step_{step:06d}"
     monitor: "train/loss"
     mode: "min"
