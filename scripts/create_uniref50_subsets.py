@@ -76,7 +76,7 @@ def create_subsets(
     # Create subsets
     print(f"\n✂️  Creating {len(subset_sizes)} subsets...")
     for size in subset_sizes:
-        subset_name = f"uniref50_{size // 1000}k" if size >= 1000 else f"uniref50_{size}"
+        subset_name = f"uniref50_{size}"
         subset_path = output_dir / subset_name
         
         print(f"\n  📁 Creating subset: {subset_name} ({size:,} sequences)")
@@ -117,16 +117,13 @@ def create_subsets(
     print("\n📋 Summary of created subsets:")
     print("-" * 80)
     for size in subset_sizes:
-        subset_name = f"uniref50_{size // 1000}k" if size >= 1000 else f"uniref50_{size}"
+        subset_name = f"uniref50_{size}"
         subset_path = output_dir / subset_name
         if subset_path.exists():
             print(f"  ✓ {subset_name:20s} → {subset_path}")
     print("-" * 80)
     
     print("\n🚀 Next steps:")
-    print("  1. Run smoke test: bash scripts/run_smoke_test.sh")
-    print("  2. Verify training works with tiny dataset")
-    print("  3. Run scaling experiments with larger subsets")
     print()
 
 
@@ -170,4 +167,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
