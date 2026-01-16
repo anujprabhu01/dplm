@@ -152,6 +152,17 @@ def save_metadata(metadata: Dict[str, Any], output_path: Path):
 
 def compute_statistics(sequences: List[str]) -> Dict[str, Any]:
     """Compute sequence statistics."""
+    if len(sequences) == 0:
+        return {
+            'num_sequences': 0,
+            'min_length': 0,
+            'max_length': 0,
+            'mean_length': 0,
+            'median_length': 0,
+            'std_length': 0,
+            'total_amino_acids': 0
+        }
+    
     lengths = [len(seq) for seq in sequences]
     
     stats = {
@@ -177,7 +188,7 @@ def main():
                         help='Maximum number of sequences to use')
     parser.add_argument('--val_split', type=float, default=0.05,
                         help='Validation split fraction')
-    parser.add_argument('--min_len', type=int, default=50,
+    parser.add_argument('--min_len', type=int, default=5,
                         help='Minimum sequence length')
     parser.add_argument('--max_len', type=int, default=512,
                         help='Maximum sequence length')
