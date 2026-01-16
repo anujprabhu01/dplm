@@ -5,7 +5,7 @@
 # Goal: ProtGPT2-scale model for scaling law (ProtGPT2 = 738M)
 
 defaults:
-  - /datamodule: tcr_2m
+  - /datamodule: uniref50_hf
   - /callbacks: lm
   - /trainer: ddp_bf16
 

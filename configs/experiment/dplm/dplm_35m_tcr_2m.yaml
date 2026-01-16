@@ -5,7 +5,7 @@
 # Goal: Small model baseline for scaling law
 
 defaults:
-  - /datamodule: tcr_2m
+  - /datamodule: uniref50_hf
   - /callbacks: lm
   - /trainer: default
 
