@@ -45,7 +45,35 @@ def load_tcr_sequences(input_path: Path) -> List[str]:
             # Assume values are sequences
             sequences = list(data.values())
     else:
-        raise ValueError(f"Unexpected data format: {type(data)}")
+        # Handle pandas DataFrame
+        try:
+            import pandas as pd
+            if isinstance(data, pd.DataFrame):
+                logger.info(f"Detected pandas DataFrame with columns: {list(data.columns)}")
+                # Try common column names for TCR sequences
+                possible_cols = ['sequence', 'seq', 'amino_acid', 'cdr3', 'junction', 'junction_aa', 'AASeq']
+                seq_col = None
+                for col in possible_cols:
+                    if col in data.columns:
+                        seq_col = col
+                        break
+                
+                if seq_col is None:
+                    # Use first column that looks like sequences
+                    for col in data.columns:
+                        if data[col].dtype == 'object':
+                            seq_col = col
+                            break
+                
+                if seq_col is None:
+                    raise ValueError(f"Could not find sequence column in DataFrame. Columns: {list(data.columns)}")
+                
+                logger.info(f"Using column '{seq_col}' for sequences")
+                sequences = data[seq_col].dropna().tolist()
+            else:
+                raise ValueError(f"Unexpected data format: {type(data)}")
+        except ImportError:
+            raise ValueError(f"Data is pandas DataFrame but pandas not installed")
     
     logger.info(f"Loaded {len(sequences)} sequences")
     return sequences
