@@ -1,0 +1,104 @@
+# @package _global_
+
+# Model Size Scaling Experiment: 35M parameters
+# Fixed dataset: 2M TCR sequences
+# Goal: Small model baseline for scaling law
+
+defaults:
+  - /datamodule: tcr_2m
+  - /callbacks: lm
+  - /trainer: default
+
+project: "DPLM_Model_Scaling"
+name: "dplm_35m_tcr_2m"
+
+datamodule:
+  data_dir: ${paths.data_dir}/tcr_2m
+  max_tokens: 6000
+  max_len: 512
+  num_workers: 4
+
+model:
+  _target_: dplm
+  num_diffusion_timesteps: 500
+  gradient_ckpt: false
+  rdm_couple: false
+  lora:
+    enable: false
+    lora_rank: 16
+    lora_dropout: 0.1
+    lora_target_module: (esm.encoder.layer.[0-9]*.attention.(self.query|self.key|self.value|output.dense).*|esm.encoder.layer.[0-9]*.(intermediate|output).dense.*)
+    modules_to_save: lm_head,esm.embeddings
+  net:
+    arch_type: esm
+    name: facebook/esm2_t12_35M_UR50D  # 12 layers, 35M parameters
+    dropout: 0.1
+
+task:
+  _target_: lm/dplm
+  learning:
+    noise: random_mask
+    watch_t1_t2_loss: false
+    cal_constant_loss: false
+    weight: linear
+  criterion:
+    _target_: byprot.modules.cross_entropy.RDMCrossEntropyLoss
+    label_smoothing: 0.0
+    ignore_index: 1
+  optimizer:
+    type: adamw
+    _partial_: true
+    lr: ${train.lr}
+    betas:
+      - 0.9
+      - 0.98
+    weight_decay: 0.01
+  lr_scheduler:
+    type: polynomial
+    warmup_steps: 2000
+    total_steps: ${trainer.max_steps}
+    lr: ${train.lr}
+    lr_end: 1e-5
+    warmup_init_lr: 1e-07
+    power: 1
+
+train:
+  seed: 42
+  lr: 0.00006  # Slightly lower LR than 8M
+  monitor: "val/loss"
+  mode: "min"
+  patience: 1000
+
+trainer:
+  min_epochs: 1
+  max_epochs: 100
+  gradient_clip_val: 1.0
+  num_sanity_val_steps: 2
+  reload_dataloaders_every_n_epochs: 1
+  use_distributed_sampler: false
+  max_steps: 50_000
+  accumulate_grad_batches: 1
+  check_val_every_n_epoch: null
+  val_check_interval: 1000
+  enable_progress_bar: true
+  num_nodes: 1
+  devices: 1
+  precision: 16
+
+logger:
+  tensorboard:
+    save_dir: "${paths.log_dir}/tensorboard"
+    name: "scaling_35m"
+    default_hp_metric: false
+
+callbacks:
+  model_checkpoint:
+    dirpath: ${paths.ckpt_dir}
+    filename: "step_{step:06d}"
+    monitor: "val/loss"
+    mode: "min"
+    save_last: true
+    save_top_k: 3
+    every_n_train_steps: 5000
+
+

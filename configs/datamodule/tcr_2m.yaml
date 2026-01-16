@@ -1,0 +1,36 @@
+# @package _global_
+
+# TCR Dataset Configuration
+# 2M sequences from healthy TCR repertoires
+# Data source: /mnt/disk11/user/xiaoyih1/data/tcr_data_all/data/tcr_repertoires_healthy_samples/tcr_repertoire_seqs.pkl
+
+_target_: byprot.datamodules.lm.UniRefHFDM
+
+data_dir: ${paths.data_dir}/tcr_2m
+max_tokens: 6000  # Adjust based on GPU memory
+max_len: 512      # TCR sequences are typically shorter
+num_workers: 4
+pin_memory: true
+persistent_workers: true
+
+# Train/validation split
+train_split: 0.95
+val_split: 0.05
+
+# Data preprocessing
+tokenizer: esm  # Use ESM tokenizer
+add_special_tokens: true
+truncation: true
+padding: max_length
+
+# Batching strategy
+batch_size_strategy: tokens  # Batch by number of tokens, not sequences
+drop_last: true
+
+# Dataset-specific settings
+dataset_name: tcr_repertoires_healthy
+description: "Healthy TCR repertoire sequences for model size scaling experiments"
+num_sequences: 2000000
+avg_sequence_length: 150  # TCRs are typically 100-200 amino acids
+
+
