@@ -38,6 +38,10 @@ extra_cuda_flags = [
 ]
 
 def get_cuda_bare_metal_version(cuda_dir):
+    # Allow forcing CPU-only build via environment variable
+    if os.environ.get("OPENFOLD_CPU_ONLY", "0") == "1":
+        print("OPENFOLD_CPU_ONLY=1 set, installing CPU-only version")
+        return None, -1, 0
     if cuda_dir==None or torch.version.cuda==None:
         print("CUDA is not found, cpu version is installed")
         return None, -1, 0
